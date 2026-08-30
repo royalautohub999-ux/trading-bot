@@ -138,7 +138,8 @@ strategy = FinalStrategy()
 # MARKET HOURS CHECK -- NSE 9:15 AM to 3:30 PM IST, Mon-Fri
 # ============================================================
 def is_market_open():
-    now = datetime.datetime.utcnow() + datetime.timedelta(hours=5, minutes=30)  # IST
+    now = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=5, minutes=30)  # IST
+    now = now.replace(tzinfo=None)
     if now.weekday() >= 5:  # Sat=5, Sun=6
         return False
     open_time = now.replace(hour=9, minute=15, second=0, microsecond=0)
@@ -230,7 +231,7 @@ def send_whatsapp_alert(message):
 
 
 def format_alert(symbol, data, result):
-    ts = (datetime.datetime.utcnow() + datetime.timedelta(hours=5, minutes=30)).strftime("%d-%b %H:%M")
+    ts = (datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=5, minutes=30)).strftime("%d-%b %H:%M")
     lines = [f"[{ts}] {symbol} -- {result['verdict']}"]
     lines.append(f"Price: {data.get('price', 'NA')}")
     if result["verdict"] == "BUY":
@@ -270,3 +271,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+  
